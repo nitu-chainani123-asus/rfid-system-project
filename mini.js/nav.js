@@ -38,3 +38,16 @@ document.addEventListener('click', function(event) {
         sidebar.classList.remove('active');
     }
 });
+
+/* LOGOUT FUNCTIONALITY */
+
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        // Clear any stored session data
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Redirect to login page or home page
+        window.location.href = 'login.html';
+    }
+}
