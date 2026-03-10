@@ -6,65 +6,29 @@
 <title>RFID Attendance – Resource Administration</title>
 
 <!-- Link CSS (relative path to same directory) -->
+ <link rel="stylesheet" href="../style.css/nav.css">
 <link rel="stylesheet" href="../style.css/resource_admin.css">
-<link rel="stylesheet" href="../style.css/nav.css">
 <link rel="stylesheet" href="../style.css/footer.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
-<div class="rfid-btn" onclick="toggleSidebar()">
-<div class="hamburger-menu">
-<span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-</div>
+<!-- Include Navigation -->
+<div id="nav-container"></div>
 
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-<div class="sidebar-header">
-<h2>Panel</h2>
-<h2>RFID Panel</h2>
-<span class="close-btn" onclick="toggleSidebar()">✕</span>
-</div>
+<!-- Load Navigation -->
+<script>
+  fetch('nav.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('nav-container').innerHTML = html;
+    })
+    .catch(error => console.error('Error loading navigation:', error));
+</script>
 
-<!-- SEARCH -->
-<div class="search">
-<input type="text" id="searchInput" placeholder="Search menu..." onkeyup="filterLinks()">
-</div>
-
-<!-- NAV LINKS -->
-<div class="nav-links">
-<a href="#" class="active">🏠 Dashboard</a>
-<a href="#">👥 User Management</a>
-<a href="#">📦 Resource Admin</a>
-<a href="#">⚙ System Config</a>
-<a href="#">📊 Reports & Export</a>
-<a href="#">🧾 Audit Logs</a>
-
-</div>
-
-<!-- LOGOUT BUTTON -->
-<div class="logout-section">
-<button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
-</div>
-
-<!-- PROFILE -->
-<div class="profile">
-<img src="https://i.pravatar.cc/100">
-<div class="profile-info">
-<div>Admin</div>
-<div style="font-size:13px;opacity:0.7;">System Manager</div>
-</div>
-</div>
-
-<button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
-</div>
+<!-- Load Navigation Scripts -->
+<script src="../mini.js/nav.js"></script>
 
 <!-- PAGE CONTENT -->
 <div class="container">
