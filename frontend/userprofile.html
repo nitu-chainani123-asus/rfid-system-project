@@ -9,9 +9,13 @@
 <link rel="stylesheet" href="css/nav.css">
 <link rel="stylesheet" href="css/userprofile.css">
 <link rel="stylesheet" href="css/userfooter.css">
+<!-- Three.js for 3D background particles -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 </head>
 
 <body>
+
+<canvas id="meshCanvas" style="position:fixed;top:0;left:0;z-index:-1;"></canvas>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -205,6 +209,7 @@
 
 </div>
 
+<!-- FOOTER -->
 <!-- ================= SMART RFID FOOTER ================= -->
 <footer class="srfid-footer" aria-label="Site footer">
   <div class="srfid-footer-container" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;align-items:start;padding-left:24px;margin-left:0;width:100%;max-width:none;">
@@ -237,7 +242,7 @@
   </div>
 </footer>
 
-<script src="js/nav.js"></script>
+<script src="js/nav.js?v=2"></script>
 <script src="js/userprofile.js"></script>
 
 </body>

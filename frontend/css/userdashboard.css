@@ -993,6 +993,184 @@ canvas {
     }
 }
 
+/* Profile Form Container */
+.profile-form-container,
+.password-form-container {
+    background: linear-gradient(135deg, var(--bg-light) 0%, rgba(102, 126, 234, 0.05) 100%);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.grid-section:hover .profile-form-container,
+.grid-section:hover .password-form-container {
+    border-color: rgba(102, 126, 234, 0.5);
+    background: linear-gradient(135deg, var(--bg-light) 0%, rgba(102, 126, 234, 0.1) 100%);
+    box-shadow: inset 0 2px 8px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+/* Summary Grid */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    padding: 20px;
+}
+
+.summary-item {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-radius: 10px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    transition: all 0.3s ease;
+}
+
+.summary-item:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.5);
+}
+
+.summary-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.summary-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* History Container */
+.history-container,
+.support-container {
+    background: linear-gradient(135deg, var(--bg-light) 0%, rgba(102, 126, 234, 0.05) 100%);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.grid-section:hover .history-container,
+.grid-section:hover .support-container {
+    border-color: rgba(102, 126, 234, 0.5);
+    background: linear-gradient(135deg, var(--bg-light) 0%, rgba(102, 126, 234, 0.1) 100%);
+    box-shadow: inset 0 2px 8px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.search-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.search-container .form-input {
+    flex: 1;
+    max-width: 300px;
+}
+
+.table-container {
+    background: var(--bg-white);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.table-container td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dark);
+}
+
+.table-container tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+/* Section Grid Layout */
+.main-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.profile-section {
+    grid-column: 1;
+}
+
+.password-section {
+    grid-column: 2;
+}
+
+.summary-section {
+    grid-column: 1 / -1;
+}
+
+.history-section {
+    grid-column: 1 / -1;
+}
+
+.support-section {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 1200px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-section,
+    .password-section,
+    .summary-section,
+    .history-section,
+    .support-section {
+        grid-column: 1;
+    }
+    
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container .form-input {
+        max-width: 100%;
+    }
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
     width: 8px;
