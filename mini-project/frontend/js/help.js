@@ -58,17 +58,15 @@ document.getElementById("correctionForm").addEventListener("submit",async functi
 e.preventDefault();
 
 // Get form data
-const name = document.getElementById('correctionName').value;
-const email = document.getElementById('correctionEmail').value;
+const name = this.querySelector('input[type="text"]').value;
 const date = this.querySelector('input[type="date"]').value;
-const issue = document.getElementById('correctionIssue').value;
+const issue = this.querySelector('textarea').value;
 
 // Create correction request object
 const request = {
     id: Date.now(),
     type: 'correction',
     name: name,
-    email: email,
     date: date,
     issue: issue,
     timestamp: new Date().toISOString(),
@@ -85,7 +83,7 @@ try {
         body: JSON.stringify({
             userId: 'user',
             userName: name,
-            userEmail: email,
+            userEmail: 'user@example.com',
             message: `Attendance Correction Request - Date: ${date}, Issue: ${issue}`
         })
     });

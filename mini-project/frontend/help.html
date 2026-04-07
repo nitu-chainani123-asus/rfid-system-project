@@ -103,13 +103,11 @@
 
 <form id="correctionForm">
 
-<input type="text" id="correctionName" placeholder="Your Name" required>
-
-<input type="email" id="correctionEmail" placeholder="Your Email" required>
+<input type="text" placeholder="Your Name" required>
 
 <input type="date" required>
 
-<textarea id="correctionIssue" placeholder="Describe the attendance issue..." required></textarea>
+<textarea placeholder="Describe the attendance issue..." required></textarea>
 
 <button type="submit">Submit Correction Request</button>
 
@@ -258,25 +256,6 @@ function updateUserFooterLinks() {
 document.addEventListener('DOMContentLoaded', function() {
     loadUserData();
     loadFooterBasedOnRole();
-    
-    // Auto-fill email fields with logged-in user's email
-    const userData = localStorage.getItem('currentUser');
-    if (userData) {
-        const currentUser = JSON.parse(userData);
-        const userEmail = currentUser.email || '';
-        
-        // Fill contact form email
-        const contactEmailField = document.querySelector('#contactForm input[type="email"]');
-        if (contactEmailField && userEmail) {
-            contactEmailField.value = userEmail;
-        }
-        
-        // Fill correction form email
-        const correctionEmailField = document.getElementById('correctionEmail');
-        if (correctionEmailField && userEmail) {
-            correctionEmailField.value = userEmail;
-        }
-    }
 });
 </script>
 

@@ -116,6 +116,18 @@ function updateAdminProfile(admin) {
 // Load profile when document is ready
 document.addEventListener('DOMContentLoaded', loadUserProfile);
 
+// PROFILE CLICK HANDLER FOR LOCALHOST
+document.addEventListener('DOMContentLoaded', function() {
+    const profileSection = document.querySelector('.profile-section');
+    if (profileSection) {
+        profileSection.style.cursor = 'pointer';
+        profileSection.addEventListener('click', function(e) {
+            // Don't prevent default, just navigate
+            window.location.href = 'userprofile.html';
+        });
+    }
+});
+
 /* THEME */
 
 function toggleTheme(){
