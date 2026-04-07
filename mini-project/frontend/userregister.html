@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login & Signup Form</title>
-    <link rel="stylesheet" type="text/css" href="css/login.css">
+    <link rel="stylesheet" type="text/css" href="css/login.css?v=3.0">
 </head>
 
 <body>
     <div class="auth-wrapper">
         <div class="background-shape"></div>
         <div class="secondary-shape"></div>
-        <div class="credentials-panel signin">
+        <div class="credentials-panel signin" style="display: flex !important;">
             <h2 class="slide-element">Login</h2>
             <form action="#" onsubmit="handleLogin(event)">
                 <div class="field-wrapper slide-element">
@@ -104,10 +104,21 @@
     // Check URL parameter to show register form by default
     window.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
+        console.log('🔍 Page loaded, checking URL parameters...');
+        console.log('🔍 showRegister param:', urlParams.get('showRegister'));
+        console.log('🔍 Current auth-wrapper classes:', document.querySelector('.auth-wrapper').className);
+        
         if (urlParams.get('showRegister') === 'true') {
             // Add the toggled class to show register form
+            console.log('🔍 Adding toggled class to show register form');
             document.querySelector('.auth-wrapper').classList.add('toggled');
+        } else {
+            // Ensure signin panel is shown by default (remove toggled class if present)
+            console.log('🔍 Removing toggled class to show signin form');
+            document.querySelector('.auth-wrapper').classList.remove('toggled');
         }
+        
+        console.log('🔍 Final auth-wrapper classes:', document.querySelector('.auth-wrapper').className);
     });
     
     function togglePassword(inputId, toggleIconId) {

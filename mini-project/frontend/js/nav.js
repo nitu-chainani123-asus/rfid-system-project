@@ -174,7 +174,14 @@ function handleLogout() {
         localStorage.removeItem('currentAdmin');
         sessionStorage.clear();
         
-        // Redirect to user registration page (login)
-        window.location.href = 'userregister.html';
+        // Check if we're on user dashboard and redirect accordingly
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('userdashboard') || currentPath.includes('user')) {
+            // Redirect to user registration page (login)
+            window.location.href = 'userregister.html';
+        } else {
+            // Redirect to admin registration page (login)
+            window.location.href = 'adminregister.html';
+        }
     }
 }

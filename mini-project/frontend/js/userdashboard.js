@@ -537,6 +537,10 @@ function submitRequest() {
         message: requestText
     });
 
+    // Ensure we have a valid userId
+    const userId = currentUser.id || currentUser.email || 'unknown';
+    console.log('Using userId:', userId);
+
     // Send request to backend
     fetch('/api/user-requests', {
         method: 'POST',
@@ -544,7 +548,7 @@ function submitRequest() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            userId: currentUser.id || currentUser.email,
+            userId: userId,
             userName: savedName,
             userEmail: savedEmail,
             message: requestText
@@ -552,6 +556,14 @@ function submitRequest() {
     })
     .then(response => {
         console.log('Response received:', response);
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            console.error('HTTP Error:', response.status, response.statusText);
+            showAlert('Server error: ' + response.status + ' ' + response.statusText, 'error');
+            return;
+        }
+        
         return response.json();
     })
     .then(data => {
@@ -607,40 +619,57 @@ function showRequestSentPopup() {
 }
 
 function viewRequests() {
+    console.log('👁 viewRequests function called');
+    
     const requestForm = document.getElementById('requestForm');
     const requestList = document.getElementById('requestList');
     const requestsContent = document.getElementById('requestsContent');
     
-    requestForm.style.display = 'none';
-    requestList.style.display = 'block';
+    if (requestForm) requestForm.style.display = 'none';
+    if (requestList) requestList.style.display = 'block';
     
+    // Load fresh requests from server
     loadRequests();
     
-    if (userRequests.length === 0) {
-        requestsContent.innerHTML = '<div class="no-requests">No requests found. Submit your first request!</div>';
-    } else {
-        requestsContent.innerHTML = userRequests.map(request => {
-            const date = new Date(request.date);
-            const formattedDate = date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            return `
-                <div class="request-item">
-                    <div class="request-item-header">
-                        <span class="request-date">${formattedDate}</span>
-                        <span class="request-status ${request.status}">${request.status}</span>
-                    </div>
-                    <div class="request-message">${request.message}</div>
-                    ${request.response ? `<div class="request-response"><strong>Admin Response:</strong> ${request.response}</div>` : ''}
-                </div>
-            `;
-        }).join('');
-    }
+    // Wait a moment for requests to load, then display
+    setTimeout(() => {
+        if (userRequests.length === 0) {
+            if (requestsContent) {
+                requestsContent.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">No requests found. Submit your first request!</div>';
+            }
+        } else {
+            if (requestsContent) {
+                requestsContent.innerHTML = userRequests.map(request => {
+                    const date = new Date(request.date || request.createdAt);
+                    const formattedDate = date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const statusClass = request.status === 'approved' ? 'approved' : 
+                                      request.status === 'rejected' ? 'rejected' : 'pending';
+                    
+                    return `
+                        <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: #f9fafb;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <span style="font-weight: 600; color: #333;">${formattedDate}</span>
+                                <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; color: white;" class="${statusClass}">
+                                    ${request.status.toUpperCase()}
+                                </span>
+                            </div>
+                            <div style="color: #555; line-height: 1.5;">${request.message}</div>
+                            ${request.response ? `<div style="margin-top: 10px; padding: 10px; background: #f0f9ff; border-left: 4px solid #3b82f6; border-radius: 4px;">
+                                <strong style="color: #3b82f6;">Admin Response:</strong> ${request.response}
+                            </div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+    }, 500);
 }
 
 // Auto-refresh requests every 5 seconds to check for admin updates
@@ -669,8 +698,12 @@ function loadRequests() {
         return;
     }
 
+    // Ensure we have a valid userId
+    const userId = currentUser.id || currentUser.email || 'unknown';
+    console.log('Loading requests for userId:', userId);
+
     // Fetch requests from backend
-    fetch(`/api/user-requests/user/${currentUser.id || currentUser.email}`)
+    fetch(`/api/user-requests/user/${userId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {

@@ -4,17 +4,15 @@ const path = require('path');
 const dbPath = path.resolve(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
-        console.error("Error opening database " + err.message);
+        console.error("Error opening database " + err.message)
     } else {
         console.log("Connected to the SQLite database.");
         db.run(`CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             fullName TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
-            phone TEXT,
-            rfid TEXT UNIQUE,
-            role TEXT NOT NULL,
             password TEXT NOT NULL,
+            rfid TEXT,
             status TEXT DEFAULT 'Active',
             createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
         )`, (err) => {
@@ -25,16 +23,15 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
         db.run(`CREATE TABLE IF NOT EXISTS admins (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            fullName TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT,
+            username TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
-            role TEXT DEFAULT 'Admin',
-            status TEXT DEFAULT 'Active',
-            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+            role TEXT DEFAULT 'admin'
         )`, (err) => {
             if (err) {
                 console.error("Error creating admins table " + err.message);
+            } else {
+                // Admins table created
             }
         });
 
@@ -74,18 +71,15 @@ const db = new sqlite3.Database(dbPath, (err) => {
             }
         });
 
+        // Create user_requests table if it doesn't exist (permanent storage)
         db.run(`CREATE TABLE IF NOT EXISTS user_requests (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             userId INTEGER NOT NULL,
             userName TEXT NOT NULL,
             userEmail TEXT NOT NULL,
             message TEXT NOT NULL,
-            date DATETIME DEFAULT CURRENT_TIMESTAMP,
-            status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
-            response TEXT,
-            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(userId) REFERENCES users(id)
+            status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'rejected')),
+            date DATETIME DEFAULT CURRENT_TIMESTAMP
         )`, (err) => {
             if (err) {
                 console.error("Error creating user_requests table " + err.message);

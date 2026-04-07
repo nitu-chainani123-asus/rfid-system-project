@@ -210,6 +210,127 @@ app.get('/api/attendance', (req, res) => {
     });
 });
 
+// Admin forgot password endpoint
+app.post('/api/admin/forgot-password', (req, res) => {
+    const { email } = req.body;
+    
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required." });
+    }
+    
+    // Check if admin exists
+    db.get('SELECT * FROM admins WHERE email = ?', [email], (err, admin) => {
+        if (err) {
+            console.error("Error checking admin email:", err);
+            return res.status(500).json({ success: false, message: "Database error." });
+        }
+        
+        if (!admin) {
+            return res.status(404).json({ success: false, message: "Admin not found." });
+        }
+        
+        // Generate reset token (simplified for demo)
+        const resetToken = Math.random().toString(36).substring(2, 15);
+        const resetLink = `http://localhost:3000/admin_reset_password.html?token=${resetToken}`;
+        
+        console.log('Admin password reset link sent to:', email);
+        
+        res.json({ 
+            success: true, 
+            message: "Password reset link sent to admin email.",
+            resetLink: resetLink
+        });
+    });
+});
+
+// Test endpoint
+app.get('/api/test', (req, res) => {
+    res.json({ success: true, message: "Test endpoint working!" });
+});
+
+// Admin Reset Password
+app.post('/api/admin/reset-password', (req, res) => {
+    const { email, newPassword } = req.body;
+    
+    if (!email || !newPassword) {
+        return res.status(400).json({ success: false, message: "Email and new password are required." });
+    }
+    
+    if (newPassword.length < 6) {
+        return res.status(400).json({ success: false, message: "Password must be at least 6 characters long." });
+    }
+    
+    // Check if admin exists
+    db.get('SELECT * FROM admins WHERE email = ?', [email], (err, admin) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ success: false, message: "Database error." });
+        }
+        
+        if (!admin) {
+            return res.status(404).json({ success: false, message: "Admin not found." });
+        }
+        
+        // Update admin password
+        db.run('UPDATE admins SET password = ? WHERE email = ?', [newPassword, email], function(err) {
+            if (err) {
+                console.error("Error updating password:", err);
+                return res.status(500).json({ success: false, message: "Error updating password." });
+            }
+            
+            console.log(`✅ Admin password updated for: ${email}`);
+            res.json({ 
+                success: true, 
+                message: "Password reset successfully! Redirecting to login..." 
+            });
+        });
+    });
+});
+
+// User Reset Password
+app.post('/api/user/reset-password', (req, res) => {
+    const { email, newPassword } = req.body;
+    
+    if (!email || !newPassword) {
+        return res.status(400).json({ success: false, message: "Email and new password are required." });
+    }
+    
+    if (newPassword.length < 6) {
+        return res.status(400).json({ success: false, message: "Password must be at least 6 characters long." });
+    }
+    
+    // Check if user exists
+    db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ success: false, message: "Database error." });
+        }
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+        
+        // Update user password
+        db.run('UPDATE users SET password = ? WHERE email = ?', [newPassword, email], function(err) {
+            if (err) {
+                console.error("Error updating password:", err);
+                return res.status(500).json({ success: false, message: "Error updating password." });
+            }
+            
+            console.log(`✅ User password updated for: ${email}`);
+            res.json({ 
+                success: true, 
+                message: "Password reset successfully! Redirecting to login..." 
+            });
+        });
+    });
+});
+
+// Test endpoint
+app.get('/api/test-user-reset', (req, res) => {
+    res.json({ success: true, message: "Test endpoint working!" });
+});
+
 // 6. Get Dashboard Metrics
 app.get('/api/metrics', (req, res) => {
     const queries = {
@@ -305,8 +426,8 @@ app.post('/api/user-requests', (req, res) => {
     }
     
     const query = `
-        INSERT INTO user_requests (userId, userName, userEmail, message, status, createdAt, updatedAt)
-        VALUES (?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        INSERT INTO user_requests (userId, userName, userEmail, message, status, date)
+        VALUES (?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
     `;
     
     db.run(query, [userId, userName, userEmail, message], function(err) {
@@ -338,7 +459,7 @@ app.post('/api/user-requests', (req, res) => {
 app.get('/api/user-requests', (req, res) => {
     const query = `
         SELECT * FROM user_requests 
-        ORDER BY createdAt DESC
+        ORDER BY date DESC
     `;
     
     db.all(query, [], (err, rows) => {
@@ -357,7 +478,7 @@ app.get('/api/user-requests/user/:userId', (req, res) => {
     const query = `
         SELECT * FROM user_requests 
         WHERE userId = ?
-        ORDER BY createdAt DESC
+        ORDER BY date DESC
     `;
     
     db.all(query, [userId], (err, rows) => {
@@ -374,17 +495,17 @@ app.put('/api/user-requests/:id', (req, res) => {
     const requestId = req.params.id;
     const { status, response } = req.body;
     
-    if (!status || !['pending', 'approved', 'rejected'].includes(status)) {
+    if (!status || !['pending', 'completed', 'rejected'].includes(status)) {
         return res.status(400).json({ success: false, message: "Invalid status." });
     }
     
     const query = `
         UPDATE user_requests 
-        SET status = ?, response = ?, updatedAt = CURRENT_TIMESTAMP
+        SET status = ?
         WHERE id = ?
     `;
     
-    db.run(query, [status, response || null, requestId], function(err) {
+    db.run(query, [status, requestId], function(err) {
         if (err) {
             console.error("Error updating user request:", err);
             return res.status(500).json({ success: false, message: "Database error." });
@@ -407,30 +528,20 @@ app.put('/api/user-requests/:id', (req, res) => {
     });
 });
 
-// Delete request
-app.delete('/api/user-requests/:id', (req, res) => {
-    const requestId = req.params.id;
-    
-    const query = `
-        DELETE FROM user_requests 
-        WHERE id = ?
-    `;
-    
-    db.run(query, [requestId], function(err) {
-        if (err) {
-            console.error("Error deleting user request:", err);
-            return res.status(500).json({ success: false, message: "Database error." });
-        }
-        
-        if (this.changes === 0) {
-            return res.status(404).json({ success: false, message: "Request not found." });
-        }
-        
-        res.json({ success: true, message: "Request deleted successfully." });
-    });
-});
+// Note: User requests should be stored permanently, not deleted
+// Removed DELETE endpoint to prevent automatic deletion of user requests
 
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+// Keep process alive for VS Code terminal
+process.on('SIGINT', () => {
+    console.log('Received SIGINT. Press Control-D to exit.');
+});
+
+// Prevent VS Code terminal from closing
+setInterval(() => {
+    // Keep the process alive
+}, 1000);

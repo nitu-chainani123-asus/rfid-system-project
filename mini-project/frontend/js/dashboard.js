@@ -210,21 +210,33 @@ document.addEventListener('DOMContentLoaded', function(){
 
 // User Requests Functions
 function loadUserRequests() {
+    console.log('🔄 Loading user requests...');
+    
     // Fetch requests from backend
     fetch('/api/user-requests')
-        .then(response => response.json())
+        .then(response => {
+            console.log('📡 Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('📥 Response data:', data);
             if (data.success) {
-                userRequests = data.requests;
+                userRequests = data.requests || [];
+                console.log('✅ Requests loaded:', userRequests.length);
                 displayUserRequests();
             } else {
-                console.error('Failed to load user requests:', data.message);
+                console.error('❌ Failed to load user requests:', data.message);
                 userRequests = [];
+                displayUserRequests();
             }
         })
         .catch(error => {
-            console.error('Error loading user requests:', error);
+            console.error('❌ Error loading user requests:', error);
             userRequests = [];
+            displayUserRequests();
         });
 }
 
@@ -237,30 +249,38 @@ function displayUserRequests() {
         return;
     }
     
-    // Show only latest 3 requests for dashboard
-    const latestRequests = userRequests.slice(-3).reverse();
+    // Show all requests for dashboard (or latest 10 if too many)
+    const latestRequests = userRequests.slice(-10).reverse();
     
     requestsList.innerHTML = latestRequests.map(request => {
+        // Handle requests with null or invalid IDs
+        const requestId = request.id || 'unknown';
+        const isAccessible = request.id && request.id !== null && request.id !== 'null';
+        
         const statusClass = getStatusClass(request.status);
         const statusIcon = getStatusIcon(request.status);
         const date = new Date(request.date);
         const timeAgo = getTimeAgo(date);
         
-        // Show action buttons only for pending requests
-        const actionButtons = request.status === 'pending' ? `
+        // Show action buttons only for pending requests with valid IDs
+        const actionButtons = request.status === 'pending' && isAccessible ? `
             <div style="margin-top: 8px; display: flex; gap: 8px;">
-                <button onclick="updateRequestStatus(${request.id}, 'approved')" 
+                <button onclick="updateRequestStatus(${requestId}, 'completed')" 
                         class="approve-btn" style="padding: 4px 12px; border: none; border-radius: 6px; 
                                background: #10b981; color: white; cursor: pointer; font-size: 12px;">
                     ✅ Approve
                 </button>
-                <button onclick="updateRequestStatus(${request.id}, 'rejected')" 
+                <button onclick="updateRequestStatus(${requestId}, 'rejected')" 
                         class="reject-btn" style="padding: 4px 12px; border: none; border-radius: 6px; 
                                background: #ef4444; color: white; cursor: pointer; font-size: 12px;">
                     ❌ Reject
                 </button>
             </div>
-        ` : '';
+        ` : isAccessible ? '' : `
+            <div style="margin-top: 8px; padding: 8px; background: #fef2f2; border: 1px solid #fed7aa; border-radius: 4px; font-size: 11px; color: #92400e;">
+                ⚠️ Cannot access request - Invalid ID
+            </div>
+        `;
         
         return `
             <div class="statusItem ${statusClass}">
@@ -268,10 +288,10 @@ function displayUserRequests() {
                     <strong>${request.userName}</strong>
                     <span style="font-size: 12px;">${statusIcon} ${request.status}</span>
                 </div>
-                <div style="font-size: 11px; margin-top: 4px; opacity: 0.8;">
-                    ${request.message.substring(0, 50)}${request.message.length > 50 ? '...' : ''}
+                <div style="font-size: 13px; margin-top: 8px; color: #555; line-height: 1.4;">
+                    ${request.message}
                 </div>
-                <div style="font-size: 10px; opacity: 0.7;">
+                <div style="font-size: 10px; opacity: 0.7; margin-top: 4px;">
                     ${timeAgo}
                 </div>
                 ${actionButtons}
@@ -309,9 +329,11 @@ function getTimeAgo(date) {
 }
 
 function updateRequestStatus(requestId, newStatus) {
+    console.log(`🔄 Updating request ${requestId} to status: ${newStatus}`);
+    
     // Prepare admin response message
     let adminResponse = '';
-    if (newStatus === 'approved') {
+    if (newStatus === 'completed') {
         adminResponse = 'Your request has been approved and processed by admin.';
     } else if (newStatus === 'rejected') {
         adminResponse = 'Your request has been rejected by admin. Please contact support for more details.';
@@ -328,21 +350,29 @@ function updateRequestStatus(requestId, newStatus) {
             response: adminResponse
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('📡 Update response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('📥 Update response data:', data);
         if (data.success) {
             // Show confirmation message
-            const statusMessage = newStatus === 'approved' ? 'approved' : 'rejected';
+            const statusMessage = newStatus === 'completed' ? 'approved' : 'rejected';
             showAdminAlert(`Request ${statusMessage} successfully!`, 'success');
             
-            // Refresh the display
+            // Refresh display
+            console.log('🔄 Refreshing requests display...');
             loadUserRequests();
         } else {
             showAdminAlert(data.message || 'Failed to update request', 'error');
         }
     })
     .catch(error => {
-        console.error('Error updating request:', error);
+        console.error('❌ Error updating request:', error);
         showAdminAlert('Failed to update request. Please try again.', 'error');
     });
 }
@@ -377,6 +407,9 @@ function showAdminAlert(message, type = 'success') {
     }, 3000);
 }
 
-// Auto-refresh requests every 30 seconds
-setInterval(loadUserRequests, 30000);
+// Auto-refresh requests every 10 seconds for better responsiveness
+setInterval(() => {
+    console.log('🔄 Auto-refreshing user requests...');
+    loadUserRequests();
+}, 10000);
 
