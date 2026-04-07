@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Select Role</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family: "Poppins", sans-serif;
+}
+
+.header{
+display:flex;
+align-items:center;
+gap:20px;
+padding:30px 50px;
+background:rgba(255,255,255,0.1);
+backdrop-filter: blur(10px);
+border-bottom:1px solid rgba(255,255,255,0.2);
+position:absolute;
+top:0;
+left:0;
+right:0;
+z-index:10;
+}
+
+.logo{
+width:80px;
+height:80px;
+background:linear-gradient(135deg,#667eea 0%,#764ba2 25%,#f093fb 50%,#f5576c 75%,#fda085 100%);
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:40px;
+color:white;
+font-weight:bold;
+box-shadow:0 15px 35px rgba(102,126,234,0.4), 0 5px 15px rgba(240,147,251,0.3);
+position:relative;
+overflow:hidden;
+animation:logoGlow 3s ease-in-out infinite alternate;
+}
+
+.logo::before{
+content:'';
+position:absolute;
+top:-50%;
+left:-50%;
+width:200%;
+height:200%;
+background:linear-gradient(45deg,transparent,rgba(255,255,255,0.3),transparent);
+transform:rotate(45deg);
+animation:logoShine 2s linear infinite;
+}
+
+.logo::after{
+content:'';
+position:absolute;
+inset:3px;
+background:linear-gradient(135deg,#667eea,#764ba2);
+border-radius:17px;
+z-index:1;
+}
+
+.logo i{
+position:relative;
+z-index:2;
+animation:logoPulse 2s ease-in-out infinite;
+}
+
+@keyframes logoGlow{
+0%{
+box-shadow:0 15px 35px rgba(102,126,234,0.4), 0 5px 15px rgba(240,147,251,0.3);
+transform:scale(1);
+}
+100%{
+box-shadow:0 20px 45px rgba(102,126,234,0.6), 0 8px 25px rgba(240,147,251,0.5);
+transform:scale(1.05);
+}
+}
+
+@keyframes logoShine{
+0%{
+transform:rotate(45deg) translateX(-100%);
+}
+100%{
+transform:rotate(45deg) translateX(100%);
+}
+}
+
+@keyframes logoPulse{
+0%,100%{
+transform:scale(1);
+}
+50%{
+transform:scale(1.1);
+}
+}
+
+.header-title{
+color:white;
+font-size:42px;
+font-weight:700;
+text-shadow:2px 2px 4px rgba(0,0,0,0.3);
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background: linear-gradient(135deg,#0080ff,#99f2c8);
+padding-top:140px;
+}
+
+.container{
+text-align:center;
+}
+
+.title{
+color:white;
+font-size:32px;
+margin-bottom:10px;
+}
+
+.subtitle{
+color:#eaeaea;
+margin-bottom:40px;
+}
+
+.cards{
+display:flex;
+gap:40px;
+}
+
+.card{
+width:260px;
+padding:35px 25px;
+border-radius:18px;
+background:rgba(255,255,255,0.15);
+backdrop-filter: blur(10px);
+border:1px solid rgba(255,255,255,0.25);
+text-align:center;
+cursor:pointer;
+transition:0.4s;
+color:white;
+}
+
+.card:hover{
+transform:translateY(-12px) scale(1.04);
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
+background:rgba(255,255,255,0.25);
+}
+
+.icon-box{
+width:70px;
+height:70px;
+margin:auto;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+margin-bottom:20px;
+}
+
+.user-icon{
+background:linear-gradient(135deg,#36d1dc,#5b86e5);
+}
+
+.admin-icon{
+background:linear-gradient(135deg,#ff6a00,#ee0979);
+}
+
+.card h3{
+font-size:22px;
+margin-bottom:10px;
+}
+
+.card p{
+font-size:14px;
+color:#eaeaea;
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="logo">
+<i class="fa-solid fa-id-card"></i>
+</div>
+<h1 class="header-title">RFID Attendance System</h1>
+</header>
+
+<div class="container">
+
+<h1 class="title">Choose Your Role</h1>
+<p class="subtitle">Select how you want to continue</p>
+
+<div class="cards">
+
+<div class="card" onclick="selectRole('user')">
+
+<div class="icon-box user-icon">
+<i class="fa-solid fa-user"></i>
+</div>
+
+<h3>User</h3>
+
+
+</div>
+
+<div class="card" onclick="selectRole('admin')">
+
+<div class="icon-box admin-icon">
+<i class="fa-solid fa-user-shield"></i>
+</div>
+
+<h3>Admin</h3>
+
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+function selectRole(role){
+
+if(role === "user"){
+window.location.href="userregister.html?showRegister=true";
+}
+else{
+window.location.href="adminregister.html";
+}
+
+}
+
+</script>
+
+</body>
+</html>
