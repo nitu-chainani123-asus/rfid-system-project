@@ -213,18 +213,20 @@
 
     .field-wrapper label {
         position: absolute;
-        top: 50%;
+        top: -5px;
         left: 0;
-        transform: translateY(-50%);
-        font-size: 16px;
-        color: #1e293b;
+        transform: translateY(0);
+        font-size: 12px;
+        color: #999;
         transition: .5s;
+        pointer-events: none;
     }
 
     .field-wrapper input:focus~label,
     .field-wrapper input:valid~label {
         top: -5px;
         color: #818cf8;
+        font-size: 12px;
     }
 
     .field-wrapper i {
