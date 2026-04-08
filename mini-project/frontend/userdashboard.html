@@ -157,27 +157,6 @@
             <textarea id="notes" placeholder="Write your notes here..." class="notes-textarea"></textarea>
             <button class="save-notes-btn">💾 Save Notes</button>
         </section>
-
-        <!-- User Request Section -->
-        <section class="grid-section request-section">
-            <div class="section-title">📤 User Request</div>
-            <div class="request-container">
-                <div class="request-form" id="requestForm">
-                    <textarea id="requestText" placeholder="Type your request to the admin here..." class="request-textarea"></textarea>
-                    <div class="request-actions">
-                        <button class="submit-request-btn" onclick="submitRequest()">📤 Send Request</button>
-                        <button class="view-requests-btn" onclick="viewRequests()">📋 View My Requests</button>
-                    </div>
-                </div>
-                <div class="request-list" id="requestList" style="display: none;">
-                    <div class="request-list-header">
-                        <h3>My Requests</h3>
-                        <button class="back-to-form-btn" onclick="backToRequestForm()">← Back</button>
-                    </div>
-                    <div id="requestsContent"></div>
-                </div>
-            </div>
-        </section>
     </div>
 </main>
 
